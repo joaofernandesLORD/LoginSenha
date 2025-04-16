@@ -11,14 +11,12 @@ public class SubTelaSystem extends JFrame {
     public SubTelaSystem() {
         this.geradorTicket = new GerarTicket();
 
-        // Configurações da janela
         setTitle("Menu Administrativo");
         setSize(500, 350);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
 
-        // Configuração do ícone
         try {
             ImageIcon icon = new ImageIcon("Resource_Image/icon.png");
             setIconImage(icon.getImage());
@@ -26,13 +24,11 @@ public class SubTelaSystem extends JFrame {
             System.err.println("Erro ao carregar ícone: " + e.getMessage());
         }
 
-        // Painel principal
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(6, 1, 15, 15));
         panel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
         panel.setBackground(CorFundo.getCorPersonalizada(7, 20, 41));
 
-        // Criação dos botões
         JButton botaoCadastrarUsuario = criarBotaoPersonalizado("Cadastrar Usuário");
         JButton botaoListaUsuarios = criarBotaoPersonalizado("Lista de Usuários");
         JButton botaoRemoverUsuario = criarBotaoPersonalizado("Remover Usuário");
@@ -40,7 +36,6 @@ public class SubTelaSystem extends JFrame {
         JButton botaoTelaSystem = criarBotaoPersonalizado("Tela Principal");
         JButton botaoSair = criarBotaoPersonalizado("Sair");
 
-        // Configuração dos ActionListeners
         botaoCadastrarUsuario.addActionListener(this::cadastrarUsuario);
         botaoListaUsuarios.addActionListener(this::exibirListaUsuarios);
         botaoRemoverUsuario.addActionListener(this::removerUsuario);
@@ -48,7 +43,6 @@ public class SubTelaSystem extends JFrame {
         botaoTelaSystem.addActionListener(e -> voltarParaTelaPrincipal());
         botaoSair.addActionListener(e -> sairDoSistema());
 
-        // Adiciona os botões ao painel
         panel.add(botaoCadastrarUsuario);
         panel.add(botaoListaUsuarios);
         panel.add(botaoRemoverUsuario);
@@ -58,10 +52,6 @@ public class SubTelaSystem extends JFrame {
 
         add(panel);
     }
-
-    /**
-     * Cria um botão personalizado com estilo consistente
-     */
     private JButton criarBotaoPersonalizado(String texto) {
         JButton botao = new JButton(texto);
         botao.setFont(new Font("Segoe UI", Font.BOLD, 14));

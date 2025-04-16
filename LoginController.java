@@ -7,9 +7,7 @@ public class LoginController {
     private static final String FILE_PATH = "credenciais.csv";
     private static final GerarTicket geradorTicket = new GerarTicket();
 
-    private static final String[] TIPOS_USUARIO = {
-            "ADM", "ENG", "SMT", "BMS", "FA", "LA", "Produção"
-    };
+    private static final String[] TIPOS_USUARIO = { "ADM", "Prod", "Aux" };
 
     public static void handleLogin(JTextField userText, JPasswordField passwordText,
             JLabel statusLabel, JFrame loginFrame) {
@@ -23,12 +21,8 @@ public class LoginController {
                 if (credencial[0].equals(senha)) {
                     statusLabel.setText("Login bem-sucedido!");
                     statusLabel.setForeground(Color.GREEN);
-
-                    loginFrame.dispose(); // Fecha a janela de login primeiro
-
-                    // Debug: Mostra qual tipo de usuário está sendo detectado
+                    loginFrame.dispose();
                     System.out.println("Tipo de usuário detectado: " + credencial[1]);
-
                     if ("ADM".equalsIgnoreCase(credencial[1])) {
                         System.out.println("Redirecionando para SubTelaSystem...");
                         SwingUtilities.invokeLater(() -> {
@@ -57,28 +51,19 @@ public class LoginController {
     }
 
     public static String[] handleCadastro(JLabel statusLabel) {
-        // Solicita senha de autenticação para cadastro
         String senhaAutenticacao = PasswordUtils.showPasswordDialog(
                 "Digite a senha de autenticação para cadastrar novo usuário:");
-
-        // Verifica senha de autenticação
         if (senhaAutenticacao == null || !senhaAutenticacao.equals("lulu2025")) {
             statusLabel.setText("Senha de autenticação incorreta!");
             statusLabel.setForeground(Color.RED);
             return null;
         }
-
-        // Obtém login único
         String login = obterLoginUnico(statusLabel);
         if (login == null)
             return null;
-
-        // Obtém senha forte
         String senha = obterSenhaForte(statusLabel);
         if (senha == null)
             return null;
-
-        // Seleciona tipo de usuário
         String credencialUsuario = selecionarcredencialUsuario();
         if (credencialUsuario == null) {
             statusLabel.setText("Cadastro cancelado.");
@@ -87,13 +72,8 @@ public class LoginController {
         }
 
         try {
-            // Tenta cadastrar o novo usuário
             FileManager.cadastrarNovoUsuario(login, senha, credencialUsuario);
-
-            // Gera o ticket de cadastro (ocultando a senha por segurança)
             geradorTicket.gerarTicketCadastroUsuario(new String[] { login, senha, credencialUsuario });
-
-            // Atualiza o status
             statusLabel.setText("Usuário " + login + " cadastrado com sucesso!");
             statusLabel.setForeground(Color.GREEN);
 
@@ -103,8 +83,6 @@ public class LoginController {
             String errorMsg = "Erro ao salvar credenciais: " + ex.getMessage();
             System.err.println(errorMsg);
             ex.printStackTrace();
-
-            // Mensagem mais amigável para o usuário
             statusLabel.setText("Falha no cadastro. Tente novamente.");
             statusLabel.setForeground(Color.RED);
 
@@ -118,12 +96,8 @@ public class LoginController {
             case "ADM":
                 new SubTelaSystem();
                 break;
-            case "ENG":
-            case "SMT":
-            case "BMS":
-            case "FA":
-            case "LA":
-            case "Produção":
+            case "Prod":
+            case "Aux":
                 new TelaSystem("Usuario", credencialUsuario);
                 break;
             default:
@@ -227,7 +201,6 @@ public class LoginController {
                 return;
             }
 
-            // Obter nova senha forte e diferente
             String novaSenha;
             String senhaAtual = credenciais.get(login)[0];
             String credencialUsuario = credenciais.get(login)[1];
@@ -255,11 +228,9 @@ public class LoginController {
                 }
             } while (true);
 
-            // Atualizar senha
             credenciais.put(login, new String[] { novaSenha, credencialUsuario });
             FileManager.salvarCredenciaisNoCSV(credenciais);
 
-            // Gerar ticket automaticamente
             geradorTicket.gerarTicketResetSenha(new String[] { login, novaSenha, credencialUsuario });
 
             statusLabel.setText("Senha resetada com sucesso para " + login + "!");
